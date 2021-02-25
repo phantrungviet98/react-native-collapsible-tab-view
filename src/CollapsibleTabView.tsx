@@ -126,6 +126,7 @@ const CollapsibleTabView = <
   routeKeyProp = 'key',
   ...tabViewProps
 }: React.PropsWithoutRef<Props<T, P>>): React.ReactElement => {
+  alert('123')
   const [headerHeight, setHeaderHeight] = React.useState(
     Math.max(initialHeaderHeight, 0)
   );
