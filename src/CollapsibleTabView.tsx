@@ -126,7 +126,6 @@ const CollapsibleTabView = <
   routeKeyProp = 'key',
   ...tabViewProps
 }: React.PropsWithoutRef<Props<T, P>>): React.ReactElement => {
-  alert('123')
   const [headerHeight, setHeaderHeight] = React.useState(
     Math.max(initialHeaderHeight, 0)
   );
@@ -156,11 +155,11 @@ const CollapsibleTabView = <
   );
 
   const [translateY, setTranslateY] = React.useState(
-    scrollY.current.interpolate({
-      inputRange: [0, Math.max(headerHeight, 0)],
-      outputRange: [0, -headerHeight],
-      extrapolateRight: 'clamp',
-    })
+    Animated.diffClamp(scrollY.current.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, -1],
+      extrapolateLeft: 'clamp',
+    }), -tabBarHeight, 0)
   );
 
   React.useLayoutEffect(() => {
@@ -334,11 +333,11 @@ const CollapsibleTabView = <
       onHeaderHeightChange?.();
       setHeaderHeight(Math.max(value, 0));
       setTranslateY(
-        scrollY.current.interpolate({
-          inputRange: [0, Math.max(value, tabBarHeight)], // Always allow for a minimum of `tabBarHeight`
-          outputRange: [0, -value],
-          extrapolateRight: 'clamp',
-        })
+        Animated.diffClamp(scrollY.current.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, -1],
+          extrapolateLeft: 'clamp',
+        }), -tabBarHeight, 0)
       );
     },
     [onHeaderHeightChange, scrollY, tabBarHeight]
