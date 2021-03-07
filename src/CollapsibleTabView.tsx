@@ -130,6 +130,7 @@ const CollapsibleTabView = <
     Math.max(initialHeaderHeight, 0)
   );
   const scrollY = React.useRef(animatedValue);
+  const currentScrollYValue = React.useRef(0);
   const listRefArr = React.useRef<{ key: T['key']; value?: ScrollRef }[]>([]);
   const listOffset = React.useRef<{ [key: string]: number }>({});
   const isGliding = React.useRef(false);
@@ -162,12 +163,17 @@ const CollapsibleTabView = <
     }), -tabBarHeight, 0)
   );
 
+  React.useEffect(() => {
+    Animated.timing(scrollY.current, {toValue: currentScrollYValue.current - headerHeight, duration: 300, useNativeDriver: true}).start();
+  }, [index])
+
   React.useLayoutEffect(() => {
     const currY = scrollY.current;
     currY.addListener(({ value }) => {
       const curRoute = routes[index][routeKeyProp as keyof Route] as string;
       listOffset.current[curRoute] = value;
       lastInteractionTime.current = Date.now();
+      currentScrollYValue.current = value;
     });
     return () => {
       currY.removeAllListeners();
